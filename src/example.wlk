@@ -6,9 +6,38 @@ object sedan {
 	method image() = "sedan.png"
 }
 
+class AutoAzul{
+	
+	var position
+	var puntos = 1
+	
+	method position() = position
+	
+	method image() = "car1spr.png"
+	
+	
+	
+}
+
+class AutoRojo{
+	
+	var position
+	var puntos = 1
+
+	method position() = position
+	
+	method image() = "simple-travel-car-top_view.png"
+	
+	
+	
+
+}
+
+
 object pantalla {
 	
-	//var cantAutos = random
+	var cantAutosRojos = 1
+	var cantAutosAzules = 1
 	
 	//method iniciar() {
 		//self.configurarInicio()
@@ -25,10 +54,15 @@ object pantalla {
 	}
 	method agregarVisuales() {
 		game.addVisualCharacter(sedan)
-		//cantAutos.times({
-			//i => game.addVisual(new Auto(position = game.at(i+3,10)))
-		}
+		cantAutosRojos.times({
+			i => game.addVisual(new AutoRojo(position = game.at(i+3,10)))
+		})
 		
+		cantAutosAzules.times({
+			i => game.addVisual(new AutoAzul(position = game.at(i+3,10)))
+		})
+		//game.addVisual(tablero)
+
 	//}
 	//method programarTeclas() {
 		//TODO: Código autogenerado 
@@ -38,4 +72,5 @@ object pantalla {
 	//}
 	
 	
+}
 }
