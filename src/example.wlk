@@ -12,6 +12,10 @@ object sedan {
 	method moverseIzquierda() {
 		position = position.left(1)
 	}
+	
+	method desaparecer() {
+		game.onTick(1000,"perdiste",{game.stop()})
+	}
 }
 
 
@@ -30,60 +34,80 @@ object autoinvisible2{
 	
 }
 
-
-
-
-//class AutoAzul{
+class Moneda {
 	
-	//var position
-	//var puntos = 1
+	var property evento = null
+	var property position = null
+	var property image = null
 	
-	//method position() = position
+	method desaparece(){
+		if (game.hasVisual(self)){
+			game.removeTickEvent(evento)
+			game.removeVisual(self)
+		}
+	}
 	
-	//method image() = "autoazul.png"
-	
-	
-	
-//d}
-
-class autoRojo{
-	
-	
-	var puntos = 1
-	
-	method image() = "simple-travel-car-top_view.png"
-	
-
+	method aparecer(){
+		evento = "Aparece moneda"
+		image = "coin.png"
+		const x = (3 .. game.width() - 5).anyOne()
+		const y = game.height() - 2
+		position = game.at(x,y)
+		game.addVisual(self)
+		game.onTick(100,evento,{self.avanzar()})
+		
+		
+}
+	method avanzar(){
+		position = self.position().down(1)
+		}
 
 }
 
 
 
 
-object autosRojos{
-
-	var property position = game.at(18,20)
-
-	method posicionAleatoria()  {position = game.at(3.randomUpTo(game.width()-3),game.height()-1)}
+class auto{
+	var property evento = null
+	var property position = null
+	var property image = null
 	
-	method generarAuto() = {
-		game.onTick(1000,"aparece auto",{new autoRojo()})
+	method desaparece(){
+		if (game.hasVisual(self)){
+			game.removeTickEvent(evento)
+			game.removeVisual(self)
+		}
 	}
 	
-	method bajarAuto() = {
-			position = position.down(1)
+}
+
+
+class Autos inherits auto{
+	
+
+	method aparece(){
+		evento = "Aparece auto"
+		image = "simple-travel-car-top_view.png"
+		const x = (3 .. game.width() - 4).anyOne()
+		const y = game.height() - 2
+		position = game.at(x,y)
+		game.addVisual(self)
+		game.onTick(100,evento,{self.avanza()})
+		game.onCollideDo(sedan,{algo => sedan.desaparecer() })
+		
 	}
 	
-method desaparecer() {
-		game.boardGround("gameover.jpeg")
+		method avanza(){
+		position = self.position().down(1)
 	}
-
+	
+	
 }
 
 
 
 object pantalla {
-	
+	var fondo = null
 	var cantAutosRojos = 1
 	var cantAutosAzules = 1
 	
@@ -94,29 +118,27 @@ object pantalla {
 		self.definirColisiones1()
 		self.definirColisiones2()
 		self.spawnAutos()
-		self.moverAutos()
+		self.definirColisionesfinal()
+		self.spawnMonedas()
+		
 		}
 	
 	
 	
 	method configurarInicio() {
+		fondo = "Ruta.png"
 		game.height(18)
-		game.width(20)
+		game.width(15)
 		game.title("Fast and furious: Panamericana Edition")
-		game.boardGround("Ruta.png")
+		game.boardGround(fondo)
 		game.start()
+		
 	}
 	method agregarVisuales() {
 		game.addVisualCharacter(sedan)
 		game.addVisualCharacter(autoinvisible1)
 		game.addVisualCharacter(autoinvisible2)
 		
-		//game.addVisual(new AutoAzul(position = game.at(3,10))
-		//cantAutosAzules.times({
-			//i => game.addVisual(new AutoAzul(position = game.at(i+3,10)))
-		//}
-		//game.addVisual(tablero)
-
 	}
 	method programarTeclas() {
 		
@@ -126,21 +148,24 @@ object pantalla {
 		keyboard.a().onPressDo{sedan.moverseIzquierda()}
 		}
 		
-	//method definirColisiones() {
-		//game.onCollideDo(sedan,{algo => sedan.desaparecer() }) 
-	//}
-	
-	method moverAutos(){
-		game.onTick(500,"mueve auto", autosRojos.bajarAuto())
-	}
-	
 	method spawnAutos() {
-		game.onTick(1000,"aparece Auto", autosRojos.generarAuto())
+		game.onTick(2000,"aparece Auto", {new Autos().aparece()})
 	}
+	
+	method spawnMonedas(){
+		game.onTick(500,"aparece moneda",{new Moneda().aparecer()})
+	}
+	
 	method definirColisiones1() {
-		game.onCollideDo(autoinvisible1,{algo => algo.moverseDerecha() }) 
+	game.onCollideDo(autoinvisible1,{sedan => sedan.moverseDerecha() }) 
 	}
 	method definirColisiones2() {
-		game.onCollideDo(autoinvisible2,{algo => algo.moverseIzquierda()}) 
+		game.onCollideDo(autoinvisible2, {sedan => sedan.moverseIzquierda()}) 
 	}
+	
+		method definirColisionesfinal() {
+		fondo = "gameover.png"
+		game.onCollideDo(sedan, {algo => game.boardGround(fondo)}) 
+	}
+	
 }
