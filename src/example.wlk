@@ -16,7 +16,6 @@ object ganar{
 	
 }
 
-
 object juego{
 	method empezar(){
 		game.height(18)
@@ -25,32 +24,19 @@ object juego{
 		game.addVisual(menu)
 		game.title("Fast and furious: Panamericana Edition")
 		game.start()
-		menu.iniciarjuego()
-		
+		menu.iniciarjuego()	
 		}
 }
-
 
 object menu {
 	method image() = "menu.jpg"
 	method position() = game.at(0.5,-2)
-	
-	
-	
 	method iniciarjuego(){
 		keyboard.c().onPressDo{
 			game.removeVisual(self)
-			pantalla.iniciar()
-			
+			pantalla.iniciar()		
 		}}
 }
-
-	
-class Visual {
-	var property image
-	var property position = game.origin()
-}	
-	
 	
 object pantalla {
 	
@@ -61,79 +47,80 @@ object pantalla {
 	const scoreNumber = new Score(
 		position = game.at(0, 17),
 		image= sedan.score().toString() + '.png'
-	)
+	)	
 	
-	var fondo = null
-	var cantAutosRojos = 1
-	var cantAutosAzules = 1
-	
-	
+	method monedas() = (sedan.monedas() + choquesedan2.monedas() + choquesedan3.monedas() + choquesedan4.monedas() + choquesedan5.monedas() + choquesedan6.monedas())
 	method position() = game.at(-1.5,1)
 	method image() = "ruta.png"
 	
 	method iniciar() {
-		
 		self.agregarVisuales()
 		self.programarTeclas()
-		self.definirColisiones1()
-		self.definirColisiones2()
 		self.spawnAutos()
 		self.definirColisiones3()
+		self.definirColisiones4()
+		self.definirColisiones5()
+		self.definirColisiones6()
+		self.definirColisiones7()
+		self.definirColisiones8()
 		self.spawnMonedas()
 		self.sumarpuntos()
 		self.mostrarscore()
-		self.spawnAutos1()
 		}
 		
 	method agregarVisuales() {
 		game.addVisualCharacter(sedan)
-		game.addVisualCharacter(autoinvisible1)
-		game.addVisualCharacter(autoinvisible2)
+		game.addVisualCharacter(choquesedan2)
+		game.addVisualCharacter(choquesedan3)
+		game.addVisualCharacter(choquesedan4)
+		game.addVisualCharacter(choquesedan5)
+		game.addVisualCharacter(choquesedan6)
 		game.addVisual(scoreInGame)
 		game.addVisual(scoreNumber)			
 	}
 	method programarTeclas() {
-		
 		keyboard.d().onPressDo{sedan.moverseDerecha()}
-		
-			
 		keyboard.a().onPressDo{sedan.moverseIzquierda()}
 		}
 		
 	method spawnAutos() {
-		game.onTick(2000,"aparece Auto", {new Autos().aparece()})
+		game.onTick(3000,"aparece Auto", {new Autos().aparece()})
 	}
-	
-	method spawnAutos1() {
-		game.onTick(2500,"aparece Auto1", {new Autos().aparece()})
-	}
-	
+		
 	method spawnMonedas(){
 		game.onTick(5000,"aparece moneda",{new Moneda().aparecer()})
 	}
 	
-	method definirColisiones1() {
-	game.onCollideDo(autoinvisible1,{algo => sedan.moverseDerecha() }) 
-	}
-	method definirColisiones2() {
-		game.onCollideDo(autoinvisible2, {algo => sedan.moverseIzquierda()}) 
-	}
 	
 	method definirColisiones3(){
 		game.onCollideDo(sedan,{algo => algo.desaparece()})
 	}
 	
+	method definirColisiones4(){
+		game.onCollideDo(choquesedan2,{algo => algo.desaparece()})
+	}
+	method definirColisiones5(){
+		game.onCollideDo(choquesedan3,{algo => algo.desaparece()})
+	}
+	
+	method definirColisiones6(){
+		game.onCollideDo(choquesedan4,{algo => algo.desaparece()})
+	}
+	
+	method definirColisiones7(){
+		game.onCollideDo(choquesedan5,{algo => algo.desaparece()})
+	}
+	
+	method definirColisiones8(){
+		game.onCollideDo(choquesedan6,{algo => algo.desaparece()})
+	}
 	method sumarpuntos(){
 		game.onTick(2300,"suma puntos",{sedan.sumarScore()})
 	}
 		
 	method mostrarscore(){
-			game.onTick(1000, 'add score', {
-			
-			scoreNumber.changeScoreImage(sedan.score())			
-		})
-	
+			game.onTick(2300, 'add score', {scoreNumber.changeScoreImage(sedan.score())})
 		}
 		
-	method estaEnElTablero(ubicacion) = ubicacion.x().between(0, game.width()) && ubicacion.y().between(-5, game.height())		
+	method estaEnElTablero(ubicacion) = ubicacion.x().between(2, game.width()-4) && ubicacion.y().between(-2, game.height())		
 }
